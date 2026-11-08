@@ -1,4 +1,151 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>TrueTrack</title>
-<style>body{font:16px/1.55 -apple-system,system-ui,sans-serif;max-width:640px;margin:0 auto;padding:40px 20px}@media(prefers-color-scheme:dark){body{background:#000;color:#f2f2f7}a{color:#4c9bff}}</style></head>
-<body><h1>TrueTrack</h1><p>Multi-day VFR trip planning for general aviation pilots on iPhone, iPad and Apple Watch.</p>
-<ul><li><a href="privacy.html">Privacy Policy / Datenschutzerklärung</a></li><li>Support: <a href="mailto:truetrackfp@gmail.com">truetrackfp@gmail.com</a></li></ul></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrueTrack – Flight planning for GA pilots</title>
+<meta name="description" content="TrueTrack plans multi-day VFR trips for general aviation pilots. METARI decodes and explains METAR and TAF.">
+<link rel="icon" href="img/truetrack.png">
+<style>
+  :root {
+    --navy:#0b1a33; --navy2:#122a52; --ink:#eef3fb; --mute:#a9b7cf; --line:rgba(255,255,255,.10);
+    --route:#d14cf0; --cyan:#5fd3ff; --card:rgba(255,255,255,.05);
+    --page:#f6f8fc; --text:#0f1a2c; --sec:#5a6780; --tile:#fff; --tline:#e3e8f2;
+  }
+  @media (prefers-color-scheme: dark) { :root { --page:#070d1a; --text:#eef3fb; --sec:#9aa8bf; --tile:#0f1a2e; --tline:#1c2a44; } }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--page); color:var(--text); font:17px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased }
+  a { color:inherit }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 22px }
+
+  /* Hero: navy sky with faint compass rings and a magenta route, like the app icon */
+  .hero { position:relative; overflow:hidden; color:var(--ink);
+    background:
+      radial-gradient(circle at 78% 42%, rgba(95,211,255,.10) 0 1px, transparent 1px 100%),
+      radial-gradient(1200px 600px at 80% -10%, #1d3f78 0%, transparent 60%),
+      linear-gradient(160deg, var(--navy2), var(--navy) 60%); }
+  .rings { position:absolute; right:-160px; top:-120px; width:760px; height:760px; opacity:.55; pointer-events:none }
+  nav { display:flex; align-items:center; gap:12px; padding:22px 0 }
+  nav img { width:34px; height:34px; border-radius:9px }
+  nav b { font-size:18px; letter-spacing:.2px }
+  nav .sp { flex:1 }
+  nav a { color:var(--mute); text-decoration:none; font-size:15px; margin-left:18px }
+  nav a:hover { color:#fff }
+  .hero-in { position:relative; display:grid; grid-template-columns:1.2fr .8fr; gap:40px; align-items:center; padding:56px 0 88px }
+  .kicker { display:inline-block; font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan);
+    border:1px solid rgba(95,211,255,.35); padding:5px 11px; border-radius:999px; margin-bottom:18px }
+  h1 { font-size:clamp(36px,5.2vw,62px); line-height:1.05; letter-spacing:-.02em; margin:0 0 18px }
+  h1 em { font-style:normal; background:linear-gradient(90deg,#fff,#c9d8f2 40%,var(--route)); -webkit-background-clip:text; background-clip:text; color:transparent }
+  .lead { font-size:19px; color:var(--mute); max-width:560px; margin:0 0 28px }
+  .cta { display:flex; flex-wrap:wrap; gap:12px }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:14px; font-weight:600; font-size:16px; text-decoration:none }
+  .btn.primary { background:#fff; color:var(--navy) }
+  .btn.ghost { border:1px solid var(--line); color:#fff; background:rgba(255,255,255,.04) }
+  .hero-icon { justify-self:center; position:relative }
+  .hero-icon img { width:min(300px,62vw); border-radius:23%; box-shadow:0 40px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08) }
+  .glow { position:absolute; inset:-30px; background:radial-gradient(circle, rgba(209,76,240,.35), transparent 65%); filter:blur(20px); z-index:-1 }
+
+  section { padding:72px 0 }
+  h2 { font-size:clamp(26px,3.4vw,38px); letter-spacing:-.015em; margin:0 0 10px }
+  .sub { color:var(--sec); margin:0 0 34px; max-width:640px }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px }
+  .tile { background:var(--tile); border:1px solid var(--tline); border-radius:20px; padding:22px }
+  .tile .ic { width:38px; height:38px; border-radius:11px; display:grid; place-items:center; margin-bottom:12px;
+    background:linear-gradient(135deg,#1d3f78,#0b1a33); color:#fff }
+  .tile h3 { margin:0 0 6px; font-size:18px }
+  .tile p { margin:0; color:var(--sec); font-size:15px }
+
+  .apps { display:grid; grid-template-columns:1fr 1fr; gap:18px }
+  .app { display:flex; gap:18px; align-items:flex-start; background:var(--tile); border:1px solid var(--tline); border-radius:24px; padding:24px }
+  .app img { width:84px; height:84px; border-radius:22%; flex:none; box-shadow:0 10px 24px rgba(11,26,51,.25) }
+  .app h3 { margin:2px 0 6px; font-size:22px }
+  .app p { margin:0 0 12px; color:var(--sec); font-size:15px }
+  .app .links a { font-size:14px; margin-right:14px; color:#2a6df4; text-decoration:none }
+  @media (prefers-color-scheme: dark) { .app .links a { color:#6ea2ff } }
+  .badge { display:inline-block; font-size:12px; font-weight:600; padding:3px 9px; border-radius:999px; background:rgba(209,76,240,.12); color:#a63fc4; margin-bottom:6px }
+  @media (prefers-color-scheme: dark) { .badge { color:#e08bf5 } }
+
+  .note { font-size:14px; color:var(--sec); border-left:3px solid var(--route); padding:6px 0 6px 14px; margin-top:28px; max-width:760px }
+  footer { border-top:1px solid var(--tline); padding:28px 0 48px; color:var(--sec); font-size:14px }
+  footer .wrap { display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center }
+  footer a { text-decoration:none } footer a:hover { text-decoration:underline }
+  footer .sp { flex:1 }
+
+  @media (max-width:860px) {
+    .hero-in { grid-template-columns:1fr; padding:28px 0 64px } .hero-icon { order:-1; justify-self:start }
+    .hero-icon img { width:120px } .grid, .apps { grid-template-columns:1fr } nav a.hide { display:none }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <svg class="rings" viewBox="0 0 760 760" aria-hidden="true">
+    <g fill="none" stroke="rgba(255,255,255,.10)">
+      <circle cx="380" cy="380" r="120"/><circle cx="380" cy="380" r="220"/><circle cx="380" cy="380" r="320"/>
+      <path d="M380 20 V740 M20 380 H740" stroke-dasharray="2 8"/>
+    </g>
+    <polyline points="150,560 300,470 420,520 560,260 620,150" fill="none" stroke="#d14cf0" stroke-width="3" stroke-linejoin="round" opacity=".9"/>
+    <g fill="#0b1a33" stroke="#d14cf0" stroke-width="3"><circle cx="150" cy="560" r="7"/><circle cx="300" cy="470" r="7"/><circle cx="420" cy="520" r="7"/><circle cx="560" cy="260" r="7"/><circle cx="620" cy="150" r="7"/></g>
+  </svg>
+  <div class="wrap">
+    <nav>
+      <img src="img/truetrack.png" alt=""><b>TrueTrack</b><span class="sp"></span>
+      <a class="hide" href="#features">Features</a><a class="hide" href="#apps">Apps</a><a href="mailto:truetrackfp@gmail.com">Contact</a>
+    </nav>
+    <div class="hero-in">
+      <div>
+        <span class="kicker">For VFR pilots · iPhone · iPad · Apple Watch</span>
+        <h1>Plan the whole trip.<br><em>Every day, every leg.</em></h1>
+        <p class="lead">TrueTrack puts a multi-day VFR trip on one calendar: legs, daylight, opening hours and PPR, fuel, weather and the checks that matter – before you go and on the day.</p>
+        <div class="cta">
+          <a class="btn primary" href="#apps">Coming to the App Store</a>
+          <a class="btn ghost" href="mailto:truetrackfp@gmail.com?subject=TrueTrack%20beta">Join the beta</a>
+        </div>
+      </div>
+      <div class="hero-icon"><div class="glow"></div><img src="img/truetrack.png" alt="TrueTrack app icon"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="features"><div class="wrap">
+  <h2>Built around the way you fly</h2>
+  <p class="sub">From the first idea to the last landing of the trip: one place for the plan, the limits and the paperwork.</p>
+  <div class="grid">
+    <div class="tile"><div class="ic">◷</div><h3>Days on a calendar</h3><p>Every leg in UTC with local time beside it, ground times, nights away and how each day ends.</p></div>
+    <div class="tile"><div class="ic">☀︎</div><h3>Daylight and hours</h3><p>Civil dawn and dusk, airfield opening hours, PPR windows and closings – shown where they limit your day.</p></div>
+    <div class="tile"><div class="ic">⛽︎</div><h3>Fuel and aircraft</h3><p>Fuel per leg and reserve, your aircraft profiles and costs, split fairly between pilot and passengers.</p></div>
+    <div class="tile"><div class="ic">☁︎</div><h3>Weather, decoded</h3><p>METAR and TAF with every group explained, flight categories on the map and forecasts along the route.</p></div>
+    <div class="tile"><div class="ic">✓</div><h3>Readiness and risk</h3><p>Currency from your logbook, personal minimums and a flight risk check with what each answer means.</p></div>
+    <div class="tile"><div class="ic">⌚︎</div><h3>On the day</h3><p>Widgets, Live Activity and the Apple Watch: next off-block, daylight left and the airfields of the day.</p></div>
+  </div>
+  <p class="note">A planning aid, not a navigation instrument and not an official briefing. Always check current official sources before flight.</p>
+</div></section>
+
+<section id="apps" style="padding-top:0"><div class="wrap">
+  <h2>Our apps</h2>
+  <p class="sub">Both are in beta testing and coming to the App Store.</p>
+  <div class="apps">
+    <div class="app">
+      <img src="img/truetrack.png" alt="TrueTrack icon">
+      <div><span class="badge">Beta</span><h3>TrueTrack: Flight Planner</h3>
+        <p>Multi-day VFR trip planning for general aviation on iPhone, iPad and Apple Watch.</p>
+        <div class="links"><a href="privacy.html">Privacy</a><a href="mailto:truetrackfp@gmail.com?subject=TrueTrack%20support">Support</a></div></div>
+    </div>
+    <div class="app">
+      <img src="img/metari.png" alt="METARI icon">
+      <div><span class="badge">Beta</span><h3>METARI</h3>
+        <p>METAR and TAF decoded and explained for pilots, with widgets, the Apple Watch and a trainer.</p>
+        <div class="links"><a href="metari/">About</a><a href="metari/privacy.html">Privacy</a><a href="mailto:truetrackfp@gmail.com?subject=METARI%20support">Support</a></div></div>
+    </div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Felix Bäcker · Frankfurt am Main</span><span class="sp"></span>
+  <a href="privacy.html">Privacy Policy</a><a href="metari/privacy.html">METARI Privacy</a><a href="mailto:truetrackfp@gmail.com">truetrackfp@gmail.com</a>
+</div></footer>
+</body>
+</html>
